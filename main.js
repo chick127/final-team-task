@@ -1,25 +1,71 @@
-// 매트릭스 배경 애니메이션 및 인터랙션 확장
+// // 매트릭스 배경 애니메이션 및 인터랙션 확장
+// const canvas = document.getElementById("matrix");
+// const ctx = canvas.getContext("2d");
+
+// let animation;
+// let drops = [];
+// let columns;
+// const fontSize = 14;
+
+// function initializeMatrix() {
+//   canvas.width = window.innerWidth;
+//   canvas.height = window.innerHeight;
+
+//   // 0과 1만 사용
+//   const letters = "01".split("");
+
+//   columns = Math.floor(canvas.width / fontSize);
+//   drops = new Array(columns)
+//     .fill(0)
+//     .map(() => (Math.random() * canvas.height) / fontSize);
+
+//   if (animation) clearInterval(animation);
+
+//   animation = setInterval(() => {
+//     ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+//     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+//     ctx.fillStyle = "#0F0";
+//     ctx.font = `${fontSize}px 'Orbitron', sans-serif`;
+
+//     for (let i = 0; i < columns; i++) {
+//       const text = letters[Math.floor(Math.random() * letters.length)];
+//       const x = i * fontSize;
+//       const y = drops[i] * fontSize;
+//       ctx.fillText(text, x, y);
+
+//       if (y > canvas.height) {
+//         drops[i] = 0;
+//       } else {
+//         drops[i] += 1;
+//       }
+//     }
+//   }, 33);
+// }
+
+// initializeMatrix();
+// window.addEventListener("resize", initializeMatrix);
+
 const canvas = document.getElementById("matrix");
 const ctx = canvas.getContext("2d");
 
-let animation;
+let animation = null;
 let drops = [];
 let columns;
 const fontSize = 14;
+const letters = "01".split("");
 
-function initializeMatrix() {
+function initializeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-
-  // 0과 1만 사용
-  const letters = "01".split("");
-
   columns = Math.floor(canvas.width / fontSize);
   drops = new Array(columns)
     .fill(0)
     .map(() => (Math.random() * canvas.height) / fontSize);
+}
 
-  if (animation) clearInterval(animation);
+function startMatrix() {
+  initializeCanvas();
 
   animation = setInterval(() => {
     ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
@@ -43,8 +89,29 @@ function initializeMatrix() {
   }, 33);
 }
 
-initializeMatrix();
-window.addEventListener("resize", initializeMatrix);
+function stopMatrix() {
+  if (animation) {
+    clearInterval(animation);
+    animation = null;
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // 화면 비우기
+  }
+}
+
+// 버튼에 연결할 함수
+function toggleMatrix() {
+  if (animation) {
+    stopMatrix();
+  } else {
+    startMatrix();
+  }
+}
+
+// 창 크기 변경 시 캔버스 재조정
+window.addEventListener("resize", () => {
+  if (animation) {
+    initializeCanvas();
+  }
+});
 
 // 섹션 등장 애니메이션
 function animateSections() {
